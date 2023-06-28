@@ -238,7 +238,6 @@ void CameraGUI::update(Mat inputImage) {
     
     cvui::endColumn();
     cvui::beginColumn(S(250), S(250));
-    if (cvui::button(S(250), S(80), illuminationLabel.c_str(), fontSize)) {HandleIllumination();}
     cvui::beginRow();
     if (cvui::button(S(70), S(70), "W", fontSize)) {HandleToggleWhite();}
     if (cvui::button(S(70), S(70), "+", fontSize)) {HandleWhiteIncrement();}
@@ -699,6 +698,7 @@ void CameraGUI::HandleToggleWhite() {
         triggerEnable = true;
         bumpControl->quickSend("!,STARTCAM");
     }
+    updateControl();
 }
 void CameraGUI::HandleWhiteIncrement() {
     if (colorDur < MAX_DURATION) {
@@ -724,6 +724,7 @@ void CameraGUI::HandleToggleSat() {
         triggerEnable = true;
         bumpControl->quickSend("!,STARTCAM");
     }
+    updateControl();
 }
 void CameraGUI::HandleSatIncrement() {
     if (colorDur < MAX_DURATION) {
@@ -736,35 +737,6 @@ void CameraGUI::HandleSatDecrement() {
         colorDur += STEP_DURATION;
         updateControl();
     }
-}
-
-void CameraGUI::HandleIllumination() {
-    //triggerTypes are sat=0, white=1, meas=2, off=3
-    triggerType = (triggerType + 1) % 4;
-    if (triggerType == 0) {
-        satFlash = true;
-        whiteFlash = false;
-        measFlash = false;
-        triggerEnable = true;
-        bumpControl->quickSend("!,STARTCAM");
-    } else if (triggerType == 1) {
-        satFlash = false;
-        whiteFlash = true;
-        measFlash = false;
-        triggerEnable = true;
-        bumpControl->quickSend("!,STARTCAM");
-    } else if (triggerType == 2) {
-        satFlash = false;
-        whiteFlash = false;
-        measFlash = true;
-        triggerEnable = true;
-        bumpControl->quickSend("!,STARTCAM");
-    } else {
-        //default to off
-        triggerEnable = false;
-        bumpControl->quickSend("!,STOPCAM");
-    }
-    updateControl();
 }
 
 //TODO: toggle I guess?
