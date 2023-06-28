@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="PCAM" InternalType="Console">
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="src/CameraImage.cpp"/>
+    <File Name="src/DataEntry.cpp"/>
+    <File Name="src/DataProcessor.cpp"/>
+    <File Name="src/Image.cpp"/>
+    <File Name="src/kbhit.cpp"/>
+    <File Name="src/main.cpp"/>
+    <File Name="src/ofThread.cpp"/>
+    <File Name="src/PA200.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/RawFileWriter.cpp"/>
+    <File Name="src/RoiImageProcessor.cpp"/>
+    <File Name="src/SBE39.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/SBE49.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/SBE50.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/serialib.cpp"/>
+    <File Name="src/SPCCBSerial.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/SPCIB.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/SPCSerial.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/UUV.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/VN100.cpp" ExcludeProjConfig="Release"/>
+    <File Name="src/MVIMPACTCamera.cpp"/>
+    <File Name="src/Camera.cpp"/>
+    <File Name="src/Log.cpp"/>
+    <File Name="src/SimCamera.cpp"/>
+    <File Name="src/PCAM.cpp"/>
+    <File Name="src/SerialDevice.cpp"/>
+    <File Name="src/RawCameraFileWriter.cpp"/>
+    <File Name="src/CameraGUI.cpp"/>
+    <File Name="src/BUMPControl.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <File Name="include/RawFileWriter.h"/>
+    <File Name="include/CameraImage.h"/>
+    <File Name="include/SPCIB.h" ExcludeProjConfig="Release"/>
+    <File Name="include/Image.h"/>
+    <File Name="include/UUV.h" ExcludeProjConfig="Release"/>
+    <File Name="include/SBE49.h" ExcludeProjConfig="Release"/>
+    <File Name="include/serialib.h"/>
+    <File Name="include/DataEntry.h"/>
+    <File Name="include/SBE49Params.h" ExcludeProjConfig="Release"/>
+    <File Name="include/SPCSerial.h" ExcludeProjConfig="Release"/>
+    <File Name="include/kbhit.h"/>
+    <File Name="include/VN100.h" ExcludeProjConfig="Release"/>
+    <File Name="include/SBE50.h" ExcludeProjConfig="Release"/>
+    <File Name="include/SBE39.h" ExcludeProjConfig="Release"/>
+    <File Name="include/SPCCBSerial.h" ExcludeProjConfig="Release"/>
+    <File Name="include/RoiImageProcessor.h"/>
+    <File Name="include/DataProcessor.h"/>
+    <File Name="include/PA200.h" ExcludeProjConfig="Release"/>
+    <File Name="include/ofThread.h"/>
+    <VirtualDirectory Name="mvIMPACT_Aquire">
+      <VirtualDirectory Name="common">
+        <File Name="include/mvIMPACT_Aquire/common/auto_array_ptr.h"/>
+        <File Name="include/mvIMPACT_Aquire/common/function_cast.h"/>
+        <File Name="include/mvIMPACT_Aquire/common/minmax.h"/>
+        <File Name="include/mvIMPACT_Aquire/common/PGMFileFunctions.cpp"/>
+        <File Name="include/mvIMPACT_Aquire/common/PGMFileFunctions.h"/>
+        <File Name="include/mvIMPACT_Aquire/common/STLHelper.h"/>
+        <VirtualDirectory Name="expat">
+          <File Name="include/mvIMPACT_Aquire/common/expat/expatHelper.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="DriverBase">
+        <VirtualDirectory Name="Include">
+          <File Name="include/mvIMPACT_Aquire/DriverBase/Include/mvCustomCommandDataTypes.h"/>
+          <File Name="include/mvIMPACT_Aquire/DriverBase/Include/mvDriverBaseEnums.h"/>
+          <File Name="include/mvIMPACT_Aquire/DriverBase/Include/mvVersionInfo.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="mvIMPACT_CPP">
+        <File Name="include/mvIMPACT_Aquire/mvIMPACT_CPP/mvIMPACT_acquire.h"/>
+        <File Name="include/mvIMPACT_Aquire/mvIMPACT_CPP/mvIMPACT_acquire_GenICam.h"/>
+        <File Name="include/mvIMPACT_Aquire/mvIMPACT_CPP/mvIMPACT_acquire_GenICam_CustomCommands.h"/>
+        <File Name="include/mvIMPACT_Aquire/mvIMPACT_CPP/mvIMPACT_acquire_GenICam_FileStream.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="mvPropHandling">
+        <VirtualDirectory Name="Include">
+          <File Name="include/mvIMPACT_Aquire/mvPropHandling/Include/mvPropHandlingDatatypes.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+      <VirtualDirectory Name="mvDeviceManager">
+        <VirtualDirectory Name="Include">
+          <File Name="include/mvIMPACT_Aquire/mvDeviceManager/Include/mvDeviceManager.h"/>
+        </VirtualDirectory>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <File Name="include/Camera.h"/>
+    <File Name="include/Log.h"/>
+    <File Name="include/SimCamera.h"/>
+    <File Name="include/PCAM.h"/>
+    <File Name="include/MVIMPACTCamera.h"/>
+    <File Name="include/SerialDevice.h"/>
+    <File Name="include/RawCameraFileWriter.h" ExcludeProjConfig="Release"/>
+    <File Name="include/cvui.h"/>
+    <File Name="include/BUMPControl.h"/>
+    <File Name="include/CameraGUI.h"/>
+    <File Name="include/EnhancedWindow.h"/>
+  </VirtualDirectory>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="-std=c++11" C_Options="" Assembler="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+        <LibraryPath Value="/lib/"/>
+        <LibraryPath Value="/usr/local/lib/"/>
+        <LibraryPath Value="/lib/aarch64-linux-gnu/"/>
+        <LibraryPath Value="/opt/mvIMPACT_Acquire/lib/arm64/"/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="include"/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="yes">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="."/>
+        <IncludePath Value="include"/>
+        <IncludePath Value="include/mvIMPACT_Aquire"/>
+        <IncludePath Value="/usr/local/include"/>
+        <Preprocessor Value="NDEBUG"/>
+      </Compiler>
+      <Linker Options="" Required="yes">
+        <LibraryPath Value="/usr/lib/"/>
+        <LibraryPath Value="/usr/local/lib/"/>
+        <LibraryPath Value="/lib/x86_64-linux-gnu"/>
+        <LibraryPath Value="/lib/aarch64-linux-gnu/"/>
+        <LibraryPath Value="/home/nvidia/Software/mvIMPACT_Acquire/lib/arm64/"/>
+        <Library Value="libpthread-2.23.so"/>
+        <Library Value="libPocoFoundation.so"/>
+        <Library Value="libPocoUtil.so"/>
+        <Library Value="libPocoXML.so"/>
+        <Library Value="libopencv_core.so"/>
+        <Library Value="libopencv_highgui.so"/>
+        <Library Value="libopencv_imgproc.so"/>
+        <Library Value="libopencv_imgcodecs.so"/>
+        <Library Value="libmvDeviceManager.so"/>
+        <Library Value="libmvGenTLProducer.so"/>
+        <Library Value="libmvVirtualDevice.so"/>
+        <Library Value="libmvGenTLConsumer.so"/>
+        <Library Value="libmvPropHandling.so"/>
+      </Linker>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="./bin/Release/$(ProjectName)" IntermediateDirectory="./obj" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="." PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>
