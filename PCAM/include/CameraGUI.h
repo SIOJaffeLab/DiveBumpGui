@@ -55,12 +55,17 @@ private:
     void HandlePositionDecrement();
     void HandleGainIncrement();
     void HandleGainDecrement();
-    void HandlePAM1();
-    void HandlePAM2();
-    void HandlePAM3();
-    void HandleIllumination();
-    void HandleREC();
+    void HandlePAM();
     void HandleScan();
+    void HandleVideo();
+    
+    void HandleToggleWhite();
+    void HandleWhiteIncrement();
+    void HandleWhiteDecrement();
+    void HandleToggleSat();
+    void HandleSatIncrement();
+    void HandleSatDecrement();
+    void HandleREC();
     
     int S(const int& x) const;
 	

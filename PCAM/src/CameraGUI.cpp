@@ -3,6 +3,10 @@
 #define CVUI_IMPLEMENTATION
 #include "cvui.h"
 
+const int MIN_DURATION = 50; //microseconds
+const int MAX_DURATION = 10000; //microseconds
+const int STEP_DURATION = 50; //microseconds
+
 CameraGUI::CameraGUI(const char * config) {
     //Defaults
 	shouldQuit = false;
@@ -227,21 +231,31 @@ void CameraGUI::update(Mat inputImage) {
         cvui::button(S(150), S(80), sequenceElapsed.str().c_str(), fontSize);
         if (cvui::button(S(150), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
     } else {
-        if (cvui::button(S(150), S(80), "PAM1", fontSize)) {HandlePAM1();}
-        if (cvui::button(S(150), S(80), "PAM2", fontSize)) {HandlePAM2();}
-        if (cvui::button(S(150), S(80), "PAM3", fontSize)) {HandlePAM3();}
+        if (cvui::button(S(150), S(80), "PAM", fontSize)) {HandlePAM();}
+        if (cvui::button(S(150), S(80), "SCAN", fontSize)) {HandleScan();}
+        if (cvui::button(S(150), S(80), "VIDEO", fontSize)) {HandleVideo();}
     }
     
     cvui::endColumn();
     cvui::beginColumn(S(250), S(250));
-    string illuminationLabel = "LUMI ";
-    if (triggerType == 0) {illuminationLabel += "[sat]";}
-    else if (triggerType == 1) {illuminationLabel += "[white]";}
-    else if (triggerType == 2) {illuminationLabel += "[meas]";}
-    else {illuminationLabel += "[none]";}
     if (cvui::button(S(250), S(80), illuminationLabel.c_str(), fontSize)) {HandleIllumination();}
+    cvui::beginRow();
+    if (cvui::button(S(70), S(70), "W", fontSize)) {HandleToggleWhite();}
+    if (cvui::button(S(70), S(70), "+", fontSize)) {HandleWhiteIncrement();}
+    if (cvui::button(S(70), S(70), "-", fontSize)) {HandleWhiteDecrement();}
+    stringstream sWhiteDur;
+    sWhiteDur << colorDur;
+    cvui::text(sWhiteDur.str().c_str(), fontSize);
+    cvui::endRow();
+    cvui::beginRow();
+    if (cvui::button(S(70), S(70), "S", fontSize)) {HandleToggleSat();}
+    if (cvui::button(S(70), S(70), "+", fontSize)) {HandleSatIncrement();}
+    if (cvui::button(S(70), S(70), "-", fontSize)) {HandleSatDecrement();}
+    stringstream sSatDur;
+    sSatDur << satDur;
+    cvui::text(sSatDur.str().c_str(), fontSize);
+    cvui::endRow();
     if (cvui::button(S(250), S(80), saveRaw ? "Stop REC" : "Start REC", fontSize)) {HandleREC();}
-    if (cvui::button(S(250), S(80), "SCAN", fontSize)) {HandleScan();}
     cvui::endColumn();
     cvui::endRow();
     
@@ -654,21 +668,18 @@ void CameraGUI::HandleGainDecrement() {
 }
 
 //TODO: hacked in names
-void CameraGUI::HandlePAM1() {
+void CameraGUI::HandlePAM() {
     triggerEnable = false;
     bumpControl->quickSend("!,STOPCAM");
     bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam1.seq");
     lastSequence = "PAM1";
     bumpControl->runSequence();
 }
-void CameraGUI::HandlePAM2() {
-    triggerEnable = false;
-    bumpControl->quickSend("!,STOPCAM");
-    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam2.seq");
-    lastSequence = "PAM2";
+void CameraGUI::HandleScan() {
+    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguifocal.seq");
     bumpControl->runSequence();
 }
-void CameraGUI::HandlePAM3() {
+void CameraGUI::HandleVideo() {
     triggerEnable = false;
     bumpControl->quickSend("!,STOPCAM");
     bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam3.seq");
@@ -676,6 +687,56 @@ void CameraGUI::HandlePAM3() {
     bumpControl->runSequence();
 }
 
+void CameraGUI::HandleToggleWhite() {
+    triggerType = 1;
+    if (satFlash || whiteFlash || measFlash) {
+        triggerEnable = false;
+        bumpControl->quickSend("!,STOPCAM");
+    } else {
+        satFlash = false;
+        whiteFlash = true;
+        measFlash = false;
+        triggerEnable = true;
+        bumpControl->quickSend("!,STARTCAM");
+    }
+}
+void CameraGUI::HandleWhiteIncrement() {
+    if (colorDur < MAX_DURATION) {
+        colorDur += STEP_DURATION;
+        updateControl();
+    }
+}
+void CameraGUI::HandleWhiteDecrement() {
+    if (colorDur > MIN_DURATION) {
+        colorDur += STEP_DURATION;
+        updateControl();
+    }
+}
+void CameraGUI::HandleToggleSat() {
+    triggerType = 0;
+    if (satFlash || whiteFlash || measFlash) {
+        triggerEnable = false;
+        bumpControl->quickSend("!,STOPCAM");
+    } else {
+        satFlash = true;
+        whiteFlash = false;
+        measFlash = false;
+        triggerEnable = true;
+        bumpControl->quickSend("!,STARTCAM");
+    }
+}
+void CameraGUI::HandleSatIncrement() {
+    if (colorDur < MAX_DURATION) {
+        colorDur += STEP_DURATION;
+        updateControl();
+    }
+}
+void CameraGUI::HandleSatDecrement() {
+    if (colorDur > MIN_DURATION) {
+        colorDur += STEP_DURATION;
+        updateControl();
+    }
+}
 
 void CameraGUI::HandleIllumination() {
     //triggerTypes are sat=0, white=1, meas=2, off=3
@@ -709,12 +770,6 @@ void CameraGUI::HandleIllumination() {
 //TODO: toggle I guess?
 void CameraGUI::HandleREC() {
     saveRaw = !saveRaw;
-}
-
-//TODO: should just load a sequence to do the focal scan?
-void CameraGUI::HandleScan() {
-    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguifocal.seq");
-    bumpControl->runSequence();
 }
 
 //Scale the ui by the built in scaleGUI factor.
