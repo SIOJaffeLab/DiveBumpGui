@@ -223,17 +223,17 @@ void CameraGUI::update(Mat inputImage) {
     cvui::endRow();
     
     cvui::beginRow(S(400), S(250));
-    cvui::beginColumn(S(150), S(250));
+    cvui::beginColumn(S(100), S(250));
     stringstream sequenceElapsed;
     if (bumpControl->sequenceRunning) {
         sequenceElapsed << "" << bumpControl->sequenceTimer.elapsedSeconds();
         cvui::text(lastSequence.c_str(), fontSize);
-        cvui::button(S(150), S(80), sequenceElapsed.str().c_str(), fontSize);
-        if (cvui::button(S(150), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
+        cvui::button(S(100), S(80), sequenceElapsed.str().c_str(), fontSize);
+        if (cvui::button(S(100), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
     } else {
-        if (cvui::button(S(150), S(80), "PAM", fontSize)) {HandlePAM();}
-        if (cvui::button(S(150), S(80), "SCAN", fontSize)) {HandleScan();}
-        if (cvui::button(S(150), S(80), "VIDEO", fontSize)) {HandleVideo();}
+        if (cvui::button(S(100), S(70), "PAM", fontSize)) {HandlePAM();}
+        if (cvui::button(S(100), S(70), "SCAN", fontSize)) {HandleScan();}
+        if (cvui::button(S(100), S(70), "VIDEO", fontSize)) {HandleVideo();}
     }
     
     cvui::endColumn();
@@ -688,7 +688,7 @@ void CameraGUI::HandleVideo() {
 
 void CameraGUI::HandleToggleWhite() {
     triggerType = 1;
-    if (satFlash || whiteFlash || measFlash) {
+    if (triggerEnable) {
         triggerEnable = false;
         bumpControl->quickSend("!,STOPCAM");
     } else {
@@ -708,13 +708,13 @@ void CameraGUI::HandleWhiteIncrement() {
 }
 void CameraGUI::HandleWhiteDecrement() {
     if (colorDur > MIN_DURATION) {
-        colorDur += STEP_DURATION;
+        colorDur -= STEP_DURATION;
         updateControl();
     }
 }
 void CameraGUI::HandleToggleSat() {
     triggerType = 0;
-    if (satFlash || whiteFlash || measFlash) {
+    if (triggerEnable) {
         triggerEnable = false;
         bumpControl->quickSend("!,STOPCAM");
     } else {
@@ -727,14 +727,14 @@ void CameraGUI::HandleToggleSat() {
     updateControl();
 }
 void CameraGUI::HandleSatIncrement() {
-    if (colorDur < MAX_DURATION) {
-        colorDur += STEP_DURATION;
+    if (satDur < MAX_DURATION) {
+        satDur += STEP_DURATION;
         updateControl();
     }
 }
 void CameraGUI::HandleSatDecrement() {
-    if (colorDur > MIN_DURATION) {
-        colorDur += STEP_DURATION;
+    if (satDur > MIN_DURATION) {
+        satDur -= STEP_DURATION;
         updateControl();
     }
 }
