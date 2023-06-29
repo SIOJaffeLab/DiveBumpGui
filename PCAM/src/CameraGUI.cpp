@@ -4,10 +4,26 @@
 #include "cvui.h"
 
 const int MIN_DURATION = 50; //microseconds
-const int MAX_DURATION = 10000; //microseconds
+const int MAX_DURATION = 20000; //microseconds
 const int STEP_DURATION = 50; //microseconds
 
 CameraGUI::CameraGUI(const char * config) {
+    ActiveControlWindow = 0;
+    
+    //PAM parameters
+    pamExposure = 500;
+    pamPower1 = 6;
+    pamIterations = 100;
+    pamPower2 = 100;
+
+    //Scan parameters
+    scanWhiteDuration = 200;
+    scanSatDuration = 500;
+    
+    //Video parameters
+    videoWhiteDuration = 200;
+    videoSatDuration = 500;
+    
     //Defaults
 	shouldQuit = false;
     saveFrame = false;
@@ -187,76 +203,116 @@ void CameraGUI::update(Mat inputImage) {
     cvui::endColumn();
     
     cvui::beginColumn(S(400), S(400));
-    
-    cvui::beginRow(S(400), S(150));
-    cvui::space(S(10));
-    if (cvui::button(S(50), S(150), "Q", fontSize)) {HandleESC();}
 
-    cvui::space(S(10));
-    cvui::beginColumn(S(150), S(150));
-    cvui::space(S(10));
-    cvui::text("POSITION", fontSize);
-    cvui::space(S(10));
-    cvui::beginRow(S(150), S(70));
-    if (cvui::button(S(70), S(70), "-", fontSize)) {HandlePositionDecrement();}
-    if (cvui::button(S(70), S(70), "+", fontSize)) {HandlePositionIncrement();}
-    cvui::endRow();
-    cvui::space(S(10));
-    cvui::text("" + bumpControl->getPosition(), fontSize);
-    cvui::endColumn();
-    
-    cvui::space(S(10));
-    cvui::beginColumn(S(150), S(150));
-    cvui::space(S(10));
-    cvui::text("GAIN", fontSize);
-    cvui::space(S(10));
-    cvui::beginRow(S(150), S(70));
-    if (cvui::button(S(70), S(70), "-", fontSize)) {HandleGainDecrement();}
-    if (cvui::button(S(70), S(70), "+", fontSize)) {HandleGainIncrement();}
-    cvui::endRow();
-    cvui::space(S(10));
-    stringstream sgain;
-    sgain << gain;
-    cvui::text(sgain.str().c_str(), fontSize);
-    cvui::endColumn();
-    
-    cvui::endRow();
-    
-    cvui::beginRow(S(400), S(250));
-    cvui::beginColumn(S(100), S(250));
-    stringstream sequenceElapsed;
-    if (bumpControl->sequenceRunning) {
-        sequenceElapsed << "" << bumpControl->sequenceTimer.elapsedSeconds();
-        cvui::text(lastSequence.c_str(), fontSize);
-        cvui::button(S(100), S(80), sequenceElapsed.str().c_str(), fontSize);
-        if (cvui::button(S(100), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
+    if (ActiveControlWindow == 1) {
+        //PAM menu
+        cvui::beginRow(S(400), S(50));
+        cvui::text("PAM menu", fontSize);
+        cvui::space(S(100));
+        if (cvui::button(S(50), S(50), "X", fontSize)) {HandleXout();}
+        cvui::endRow();
+        LabelledRow(pamExposure, " Ambient  ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        LabelledRow(pamPower1, "Meas pwr ", 1, 1, 100);
+        LabelledRow(pamIterations, "Sat iter   ", 10, 10, 1000);
+        LabelledRow(pamPower2, "Sat pwer ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        cvui::space(S(1));
+        if (cvui::button(S(200), S(50), "Run PAM", fontSize)) {HandleRunPam();}
+    } else if (ActiveControlWindow == 2) {
+        //SCAN menu
+        cvui::beginRow(S(400), S(50));
+        cvui::text("SCAN menu", fontSize);
+        cvui::space(S(100));
+        if (cvui::button(S(50), S(50), "X", fontSize)) {HandleXout();}
+        cvui::endRow();
+        LabelledRow(scanWhiteDuration, " White Dur ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        LabelledRow(scanSatDuration,   "   Sat Dur ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        cvui::space(S(101));
+        if (cvui::button(S(200), S(50), "Run SCAN", fontSize)) {HandleRunScan();}
+    } else if (ActiveControlWindow == 3) {
+        //Video menu
+        cvui::beginRow(S(400), S(50));
+        cvui::text("VIDEO menu", fontSize);
+        cvui::space(S(100));
+        if (cvui::button(S(50), S(50), "X", fontSize)) {HandleXout();}
+        cvui::endRow();
+        LabelledRow(videoWhiteDuration, " White Dur ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        LabelledRow(videoSatDuration,   "   Sat Dur ", STEP_DURATION, MIN_DURATION, MAX_DURATION);
+        cvui::space(S(101));
+        if (cvui::button(S(200), S(50), "Run Video", fontSize)) {HandleRunVideo();}
     } else {
-        if (cvui::button(S(100), S(70), "PAM", fontSize)) {HandlePAM();}
-        if (cvui::button(S(100), S(70), "SCAN", fontSize)) {HandleScan();}
-        if (cvui::button(S(100), S(70), "VIDEO", fontSize)) {HandleVideo();}
+        //main menu
+        cvui::beginRow(S(400), S(150));
+        cvui::space(S(10));
+        if (cvui::button(S(50), S(150), "Q", fontSize)) {HandleESC();}
+
+        cvui::space(S(10));
+        cvui::beginColumn(S(150), S(150));
+        cvui::space(S(10));
+        cvui::text("POSITION", fontSize);
+        cvui::space(S(10));
+        cvui::beginRow(S(150), S(70));
+        if (cvui::button(S(70), S(70), "-", fontSize)) {HandlePositionDecrement();}
+        if (cvui::button(S(70), S(70), "+", fontSize)) {HandlePositionIncrement();}
+        cvui::endRow();
+        cvui::space(S(10));
+        cvui::text("" + bumpControl->getPosition(), fontSize);
+        cvui::endColumn();
+        
+        cvui::space(S(10));
+        cvui::beginColumn(S(150), S(150));
+        cvui::space(S(10));
+        cvui::text("GAIN", fontSize);
+        cvui::space(S(10));
+        cvui::beginRow(S(150), S(70));
+        if (cvui::button(S(70), S(70), "-", fontSize)) {HandleGainDecrement();}
+        if (cvui::button(S(70), S(70), "+", fontSize)) {HandleGainIncrement();}
+        cvui::endRow();
+        cvui::space(S(10));
+        stringstream sgain;
+        sgain << gain;
+        cvui::text(sgain.str().c_str(), fontSize);
+        cvui::endColumn();
+        
+        cvui::endRow();
+        cvui::space(5);
+        
+        cvui::beginRow(S(400), S(250));
+        cvui::beginColumn(S(100), S(250));
+        stringstream sequenceElapsed;
+        if (bumpControl->sequenceRunning) {
+            sequenceElapsed << "" << bumpControl->sequenceTimer.elapsedSeconds();
+            cvui::text(lastSequence.c_str(), fontSize);
+            cvui::button(S(100), S(80), sequenceElapsed.str().c_str(), fontSize);
+            if (cvui::button(S(100), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
+        } else {
+            if (cvui::button(S(100), S(70), "PAM", fontSize)) {HandlePAM();}
+            if (cvui::button(S(100), S(70), "SCAN", fontSize)) {HandleScan();}
+            if (cvui::button(S(100), S(70), "VIDEO", fontSize)) {HandleVideo();}
+        }
+        
+        cvui::endColumn();
+        cvui::beginColumn(S(250), S(250));
+        cvui::beginRow();
+        if (cvui::button(S(70), S(70), "W", fontSize)) {HandleToggleWhite();}
+        if (cvui::button(S(70), S(70), "-", fontSize)) {HandleWhiteDecrement();}
+        if (cvui::button(S(70), S(70), "+", fontSize)) {HandleWhiteIncrement();}
+        stringstream sWhiteDur;
+        sWhiteDur << colorDur;
+        cvui::text(sWhiteDur.str().c_str(), fontSize);
+        cvui::endRow();
+        cvui::beginRow();
+        if (cvui::button(S(70), S(70), "S", fontSize)) {HandleToggleSat();}
+        if (cvui::button(S(70), S(70), "-", fontSize)) {HandleSatDecrement();}
+        if (cvui::button(S(70), S(70), "+", fontSize)) {HandleSatIncrement();}
+        stringstream sSatDur;
+        sSatDur << satDur;
+        cvui::text(sSatDur.str().c_str(), fontSize);
+        cvui::endRow();
+        if (cvui::button(S(250), S(80), saveRaw ? "Stop REC" : "Start REC", fontSize)) {HandleREC();}
+        cvui::endColumn();
+        cvui::endRow();
+        
     }
-    
-    cvui::endColumn();
-    cvui::beginColumn(S(250), S(250));
-    cvui::beginRow();
-    if (cvui::button(S(70), S(70), "W", fontSize)) {HandleToggleWhite();}
-    if (cvui::button(S(70), S(70), "+", fontSize)) {HandleWhiteIncrement();}
-    if (cvui::button(S(70), S(70), "-", fontSize)) {HandleWhiteDecrement();}
-    stringstream sWhiteDur;
-    sWhiteDur << colorDur;
-    cvui::text(sWhiteDur.str().c_str(), fontSize);
-    cvui::endRow();
-    cvui::beginRow();
-    if (cvui::button(S(70), S(70), "S", fontSize)) {HandleToggleSat();}
-    if (cvui::button(S(70), S(70), "+", fontSize)) {HandleSatIncrement();}
-    if (cvui::button(S(70), S(70), "-", fontSize)) {HandleSatDecrement();}
-    stringstream sSatDur;
-    sSatDur << satDur;
-    cvui::text(sSatDur.str().c_str(), fontSize);
-    cvui::endRow();
-    if (cvui::button(S(250), S(80), saveRaw ? "Stop REC" : "Start REC", fontSize)) {HandleREC();}
-    cvui::endColumn();
-    cvui::endRow();
     
     cvui::endColumn();
     cvui::endRow();
@@ -666,24 +722,26 @@ void CameraGUI::HandleGainDecrement() {
     }
 }
 
-//TODO: hacked in names
 void CameraGUI::HandlePAM() {
-    triggerEnable = false;
-    bumpControl->quickSend("!,STOPCAM");
-    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam1.seq");
-    lastSequence = "PAM1";
-    bumpControl->runSequence();
+    ActiveControlWindow = 1;
+    //triggerEnable = false;
+    //bumpControl->quickSend("!,STOPCAM");
+    //bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam1.seq");
+    //lastSequence = "PAM1";
+    //bumpControl->runSequence();
 }
 void CameraGUI::HandleScan() {
-    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguifocal.seq");
-    bumpControl->runSequence();
+    ActiveControlWindow = 2;
+    //bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguifocal.seq");
+    //bumpControl->runSequence();
 }
 void CameraGUI::HandleVideo() {
-    triggerEnable = false;
-    bumpControl->quickSend("!,STOPCAM");
-    bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam3.seq");
-    lastSequence = "PAM3";
-    bumpControl->runSequence();
+    ActiveControlWindow = 3;
+    //triggerEnable = false;
+    //bumpControl->quickSend("!,STOPCAM");
+    //bumpControl->loadSequence("/mnt/NVMEDATA/Sequencetrials/diverguipam3.seq");
+    //lastSequence = "PAM3";
+    //bumpControl->runSequence();
 }
 
 void CameraGUI::HandleToggleWhite() {
@@ -700,6 +758,95 @@ void CameraGUI::HandleToggleWhite() {
     }
     updateControl();
 }
+
+//modify files that must exist (hard crash otherwise)
+void CameraGUI::HandleRunPam() {
+    ifstream fil("/mnt/NVMEDATA/AutoSequences/pam.seq");
+    if (!fil.good()) {
+        cerr << "Error: could not open pam sequence file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    ofstream out("auto.seq");
+    if (!out.good()) {
+        cerr << "Error: could not open pam save file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    string line;
+    while (fil >> line) {
+        ReplaceAll(line, "[exposure]", IntToString(pamExposure));
+        ReplaceAll(line, "[power1]", IntToString(pamPower1));
+        ReplaceAll(line, "[iterations]", IntToString(pamIterations));
+        ReplaceAll(line, "[power2]", IntToString(pamPower2));
+        out << line + "\n";
+    }
+    fil.close();
+    out.close();
+    
+    RunAutoSequence();
+}
+
+void CameraGUI::HandleRunScan() {
+    ifstream fil("/mnt/NVMEDATA/AutoSequences/scan.seq");
+    if (!fil.good()) {
+        cerr << "Error: could not open pam sequence file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    ofstream out("auto.seq");
+    if (!out.good()) {
+        cerr << "Error: could not open pam save file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    string line;
+    while (fil >> line) {
+        ReplaceAll(line, "[duration1]", IntToString(scanWhiteDuration));
+        ReplaceAll(line, "[duration2]", IntToString(scanSatDuration));
+        out << line + "\n";
+    }
+    fil.close();
+    out.close();
+    
+    RunAutoSequence();
+}
+
+void CameraGUI::HandleRunVideo() {
+    ifstream fil("/mnt/NVMEDATA/AutoSequences/video.seq");
+    if (!fil.good()) {
+        cerr << "Error: could not open pam sequence file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    ofstream out("auto.seq");
+    if (!out.good()) {
+        cerr << "Error: could not open pam save file ... aborting\n" << flush;
+        exit(-1);
+    }
+    
+    string line;
+    while (fil >> line) {
+        ReplaceAll(line, "[duration3]", IntToString(videoWhiteDuration));
+        ReplaceAll(line, "[duration4]", IntToString(videoSatDuration));
+        out << line + "\n";
+    }
+    fil.close();
+    out.close();
+    
+    RunAutoSequence();
+}
+
+void CameraGUI::RunAutoSequence() {
+    ActiveControlWindow = 0;
+    triggerEnable = false;
+    bumpControl->quickSend("!,STOPCAM");
+    bumpControl->loadSequence("auto.seq");
+    lastSequence = "auto";
+    bumpControl->runSequence();
+}
+
+
 void CameraGUI::HandleWhiteIncrement() {
     if (colorDur < MAX_DURATION) {
         colorDur += STEP_DURATION;
@@ -726,6 +873,19 @@ void CameraGUI::HandleToggleSat() {
     }
     updateControl();
 }
+
+void CameraGUI::ReplaceAll(string& str, const string& from, const string& to) {
+    if (from.empty()) {
+        return;
+    }
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length();
+    }
+}
+
+
 void CameraGUI::HandleSatIncrement() {
     if (satDur < MAX_DURATION) {
         satDur += STEP_DURATION;
@@ -743,6 +903,39 @@ void CameraGUI::HandleSatDecrement() {
 void CameraGUI::HandleREC() {
     saveRaw = !saveRaw;
 }
+
+void CameraGUI::HandleXout() {
+    ActiveControlWindow = 0;
+}
+
+string CameraGUI::IntToString(int x) {
+    stringstream ss;
+    ss << x;
+    return ss.str();
+}
+
+//modifies the value
+void CameraGUI::ChangeInt(int& value, int change, int Min, int Max) {
+    int v = value + change;
+    if (v >= Min && v <= Max) {
+        value = v;
+    }
+}
+
+// mostly for the sub menus
+void CameraGUI::LabelledRow(int& value, string id, int sstep, int low, int high) {
+    cvui::beginRow();
+    cvui::text(id.c_str(), fontSize);
+    if (cvui::button(S(70), S(70), "-", fontSize)) {
+        ChangeInt(value, -sstep, low, high);
+    }
+    if (cvui::button(S(70), S(70), "+", fontSize)) {
+        ChangeInt(value, sstep, low, high);
+    }
+    cvui::text(IntToString(value), fontSize);
+    cvui::endRow();
+}
+
 
 //Scale the ui by the built in scaleGUI factor.
 //Short (bad) name since this gets called a lot.

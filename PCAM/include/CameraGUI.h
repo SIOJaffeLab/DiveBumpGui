@@ -67,6 +67,18 @@ private:
     void HandleSatDecrement();
     void HandleREC();
     
+    void HandleXout();
+    
+    void HandleRunPam();
+    void HandleRunScan();
+    void HandleRunVideo();
+    void RunAutoSequence();
+    
+    string IntToString(int x);
+    void ChangeInt(int& value, int change, int Min, int Max);
+    void LabelledRow(int& value, string id, int sstep, int low, int high);
+    void ReplaceAll(string& str, const string& from, const string& to);
+    
     int S(const int& x) const;
 	
 private:
@@ -97,6 +109,20 @@ private:
     
     int guiImageWidth;
     int guiImageHeight;
+    
+    //PAM parameters
+    int pamExposure;
+    int pamPower1;
+    int pamIterations;
+    int pamPower2;
+    
+    //Scan parameters
+    int scanWhiteDuration;
+    int scanSatDuration;
+    
+    //Video parameters
+    int videoWhiteDuration;
+    int videoSatDuration;
     
     // Close match to the bump-control UI
     int satDur;
@@ -133,4 +159,6 @@ private:
     bool shouldQuit;
     
     bool roiSelected;
+    
+    int ActiveControlWindow;
 };

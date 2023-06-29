@@ -33,3 +33,5 @@
 
 .codelite/
 bin/
+*.mk
+
