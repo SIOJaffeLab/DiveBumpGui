@@ -7,6 +7,9 @@ const int MIN_DURATION = 50; //microseconds
 const int MAX_DURATION = 20000; //microseconds
 const int STEP_DURATION = 50; //microseconds
 
+const int MAIN_MENU_BINNING = 2;
+const int DATA_MENU_BINNING = 1;
+
 CameraGUI::CameraGUI(const char * config) {
     ActiveControlWindow = 0;
     
@@ -203,7 +206,7 @@ void CameraGUI::update(Mat inputImage) {
     cvui::endColumn();
     
     cvui::beginColumn(S(400), S(400));
-
+    
     if (ActiveControlWindow == 1) {
         //PAM menu
         cvui::beginRow(S(400), S(50));
@@ -285,6 +288,7 @@ void CameraGUI::update(Mat inputImage) {
             cvui::button(S(100), S(80), sequenceElapsed.str().c_str(), fontSize);
             if (cvui::button(S(100), S(80), "CANCEL SEQ", fontSize)) {bumpControl->stopSequence();}
         } else {
+            SetBinning(MAIN_MENU_BINNING);
             if (cvui::button(S(100), S(70), "PAM", fontSize)) {HandlePAM();}
             if (cvui::button(S(100), S(70), "SCAN", fontSize)) {HandleScan();}
             if (cvui::button(S(100), S(70), "VIDEO", fontSize)) {HandleVideo();}
@@ -839,6 +843,8 @@ void CameraGUI::HandleRunVideo() {
 
 void CameraGUI::RunAutoSequence() {
     ActiveControlWindow = 0;
+    SetBinning(DATA_MENU_BINNING);
+    saveRaw = true;
     triggerEnable = false;
     bumpControl->quickSend("!,STOPCAM");
     bumpControl->loadSequence("auto.seq");
@@ -907,6 +913,18 @@ void CameraGUI::HandleREC() {
 void CameraGUI::HandleXout() {
     ActiveControlWindow = 0;
 }
+
+// Check the binning matches the input and potentially change it.
+//Does nothing if the binning matches.
+//Stops the recording (flags it to stop) if it has to change.
+void CameraGUI::SetBinning(const int& bin) {
+    if (bin != binning) {
+        binning = bin;
+        saveRaw = false;
+        ((MVIMPACTCamera*)bumpCamera)->setBinning(binning);
+    }
+}
+
 
 string CameraGUI::IntToString(int x) {
     stringstream ss;

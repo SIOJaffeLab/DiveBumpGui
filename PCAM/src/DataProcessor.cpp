@@ -24,7 +24,11 @@ void DataProcessor::setThreadDelay(unsigned int delay) {
 void DataProcessor::addEntry(DataEntry* entry) {
 	if (dataQueue.size() < maxQueueSize) {
 		lock();
-		dataQueue.push(entry);
+        try {
+            dataQueue.push(entry);
+        } catch (...) {
+            cout << "DataProcessor.cpp: Unknown error in push ... ignoring\n" << flush;
+        }
 		unlock();
 		
 	}
