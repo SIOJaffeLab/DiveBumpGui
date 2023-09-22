@@ -843,10 +843,10 @@ void CameraGUI::HandleRunVideo() {
 
 void CameraGUI::RunAutoSequence() {
     ActiveControlWindow = 0;
+    bumpControl->quickSend("!,STOPCAM");
     SetBinning(DATA_MENU_BINNING);
     saveRaw = true;
     triggerEnable = false;
-    bumpControl->quickSend("!,STOPCAM");
     bumpControl->loadSequence("auto.seq");
     lastSequence = "auto";
     bumpControl->runSequence();
