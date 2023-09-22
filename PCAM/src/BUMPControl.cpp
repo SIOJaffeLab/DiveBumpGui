@@ -293,7 +293,9 @@ void BUMPControl::threadedFunction()
             
             // Check for the end of a sequence
             if (this->sequenceRunning && this->sequenceTimer.elapsedSeconds() > 1) {
-                if (buf.find("BUMP:") != std::string::npos) {
+                if (buf.find("BUMP:") != std::string::npos && 
+                buf.find("runseq") == std::string::npos) {
+                    cout << "Sequence ended\n" << flush;
                     this->sequenceRunning = false;
                     this->sequenceTimer.stop();
                     this->device.WriteString("@");

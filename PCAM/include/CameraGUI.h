@@ -74,6 +74,8 @@ private:
     void HandleRunVideo();
     void RunAutoSequence();
     
+    void SetBinning(const int& bin);
+
     string IntToString(int x);
     void ChangeInt(int& value, int change, int Min, int Max);
     void LabelledRow(int& value, string id, int sstep, int low, int high);

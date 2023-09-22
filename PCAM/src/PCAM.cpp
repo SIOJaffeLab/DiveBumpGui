@@ -400,7 +400,6 @@ int PCAM::updateImageCount() {
 
 void PCAM::addEntry(DataEntry * pImg) {
 
-    
     CameraImage * procImg = (CameraImage*)pImg;
     bool enqueued = false;
     
@@ -430,9 +429,10 @@ void PCAM::addEntry(DataEntry * pImg) {
 						cvFmt, 
 						procImg->getDataPointer(),
 						rowBytes );
+        //consistent size for display only
+        cv::resize(opencvImg, opencvImg, cv::Size(1504, 1504));
         
         opencvImg.copyTo(displayImg);
-    
     }
     
     // Must call this before sending procImg to roi processor
