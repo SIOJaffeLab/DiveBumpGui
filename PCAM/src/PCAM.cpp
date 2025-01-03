@@ -295,6 +295,7 @@ int PCAM::RunCameraGui()
             // Check is we should save raw data
             if (cameraGUI.saveRaw && rawFileWriter == NULL) {
                 // Create a file writer
+                cfg->setDouble("Camera.Gain", cameraGUI.gain);
                 rawFileWriter = new RawCameraFileWriter(this->cfg);
                 rawFileWriter->updateDataDir(dataDir->toString());
                 log->info("Created raw camera file writer.");
